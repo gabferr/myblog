@@ -1,0 +1,35 @@
+<!-- templates/home.html (atualizado) -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Blog</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+        header { background: #f4f4f4; padding: 1rem; text-align: center; }
+        main { max-width: 800px; margin: auto; }
+        article { background: #fff; border: 1px solid #ddd; margin-bottom: 1rem; padding: 1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Meu Blog</h1>
+        <a href="/login">Login</a>
+    </header>
+    <main>
+        {{range .}}
+            <article>
+                <h2>{{.Title}}</h2>
+                <p>{{.Content}}</p>
+                <a href="/post?id={{.ID}}">Ler mais</a>
+                <p>Criado em: {{.CreatedAt.Format "02/01/2006 15:04:05"}}</p>
+            </article>
+        {{end}}
+    </main>
+</body>
+</html>
+
+
+
+
