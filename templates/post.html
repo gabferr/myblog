@@ -1,27 +1,26 @@
-<!-- templates/post.html (atualizado) -->
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Title}} - Meu Blog</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
-        header { background: #f4f4f4; padding: 1rem; text-align: center; }
-        main { max-width: 800px; margin: auto; }
-        article { background: #fff; border: 1px solid #ddd; padding: 1rem; }
-    </style>
+    <title>Painel de Administração</title>
 </head>
 <body>
-    <header>
-        <h1>{{.Title}}</h1>
-    </header>
-    <main>
-        <article>
-            <p>{{.Content}}</p>
-            <p>Criado em: {{.CreatedAt.Format "02/01/2006 15:04:05"}}</p>
-        </article>
-        <a href="/">Voltar para a página inicial</a>
-    </main>
+    <h1>Painel de Administração</h1>
+    <a href="/create">Criar Novo Post</a>
+    <hr>
+    <h2>Posts Existentes</h2>
+    <ul>
+        {{range .}}
+            <li>
+                <a href="/post?id={{.ID}}">{{.Title}}</a>
+                <a href="/edit?id={{.ID}}">[Editar]</a>
+                <a href="/delete?id={{.ID}}" onclick="return confirm('Tem certeza que deseja excluir este post?')">[Excluir]</a>
+            </li>
+        {{else}}
+            <li>Nenhum post encontrado.</li>
+        {{end}}
+    </ul>
 </body>
 </html>
