@@ -1,27 +1,20 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
-	"text/template"
 
 	"github.com/gabferr/myblog/db"
 )
 
-// Exibe a página inicial com os posts mais recentes
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/home.html")
+	posts, err := db.GetAllPosts()
 	if err != nil {
-		http.Error(w, "Erro ao carregar template", http.StatusInternalServerError)
+		http.Error(w, "Erro ao obter posts", http.StatusInternalServerError)
+		log.Println("Erro ao obter posts:", err)
 		return
 	}
 
-	// Obtém a lista de posts
-	posts, err := db.GetAllPosts(db.DBConn)
-	if err != nil {
-		http.Error(w, "Erro ao carregar posts", http.StatusInternalServerError)
-		return
-	}
-
-	// Renderiza a página com os posts
-	tmpl.Execute(w, posts)
+	// Renderiza o template 'home.html' dentro do layout
+	renderTemplate(w, "home.html", posts)
 }

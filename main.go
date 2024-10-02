@@ -7,6 +7,7 @@ import (
 
 	"github.com/gabferr/myblog/db"
 	"github.com/gabferr/myblog/handlers"
+	"github.com/gabferr/myblog/middleware"
 )
 
 func main() {
@@ -24,10 +25,9 @@ func main() {
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/post", handlers.PostHandler)
 	http.HandleFunc("/admin", handlers.AdminHandler)
-	http.HandleFunc("/login", handlers.LoginHandler)
-	http.HandleFunc("/register", handlers.RegisterHandler)
+	http.HandleFunc("/login", middleware.BasicAuth(handlers.LoginHandler, "admin", "senhaSegura"))
+	http.HandleFunc("/register", middleware.BasicAuth(handlers.RegisterHandler, "admin", "senhaSegura"))
 	http.HandleFunc("/create", handlers.CreatePostHandler)
-
 	// Inicializa o servidor
 	fmt.Println("Servidor rodando em http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

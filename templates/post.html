@@ -1,26 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Administração</title>
-</head>
-<body>
-    <h1>Painel de Administração</h1>
-    <a href="/create">Criar Novo Post</a>
-    <hr>
-    <h2>Posts Existentes</h2>
-    <ul>
-        {{range .}}
-            <li>
-                <a href="/post?id={{.ID}}">{{.Title}}</a>
-                <a href="/edit?id={{.ID}}">[Editar]</a>
-                <a href="/delete?id={{.ID}}" onclick="return confirm('Tem certeza que deseja excluir este post?')">[Excluir]</a>
-            </li>
-        {{else}}
-            <li>Nenhum post encontrado.</li>
-        {{end}}
-    </ul>
-</body>
-</html>
+<!-- templates/post.html -->
+{{ define "title" }}{{.Title}} - Meu Blog{{ end }}
+{{ define "content" }}
+    <article>
+        <h2>{{.Title}}</h2>
+        <p>{{.Content}}</p>
+        <p>Criado em: {{.CreatedAt.Format "02/01/2006 15:04:05"}}</p>
+    </article>
+    <a href="/" class="btn btn-link">Voltar para a página inicial</a>
+{{ end }}
