@@ -1,3 +1,4 @@
+// handlers/admin.go
 package handlers
 
 import (
@@ -9,8 +10,8 @@ import (
 
 // AdminHandler exibe o painel de administração com a lista de posts
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
-    // Busca todos os posts do banco de dados
-    posts, err := db.GetAllPosts(dbConn)
+    // Busca todos os posts do banco de dados usando a conexão exportada
+    posts, err := db.GetAllPosts(db.DBConn) // Usando a conexão exportada
     if err != nil {
         http.Error(w, "Erro ao carregar posts", http.StatusInternalServerError)
         return

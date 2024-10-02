@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"text/template"
 
+	"fmt"
+
 	"github.com/gabferr/myblog/db"
 	"github.com/gabferr/myblog/models"
 )
@@ -22,9 +24,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
+		// Imprime o username e password recebidos (para debug)
+		fmt.Println("Username:", username)
+		fmt.Println("Password:", password)
+
 		// Validação e autenticação do usuário
-		// Exemplo básico:
-		user, err := db.GetUserByUsername(dbConn, username)
+		user, err := db.GetUserByUsername(db.DBConn, username)
 		if err != nil || user == nil || user.Password != password {
 			http.Error(w, "Usuário ou senha incorretos", http.StatusUnauthorized)
 			return
@@ -50,7 +55,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 
 		// Verifica se o usuário já existe
-		user, _ := db.GetUserByUsername(dbConn, username)
+		user, _ := db.GetUserByUsername(db.DBConn, username)
 		if user != nil {
 			http.Error(w, "Nome de usuário já em uso", http.StatusBadRequest)
 			return
@@ -62,7 +67,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			Password: password,
 			Email:    email,
 		}
-		err := db.CreateUser(dbConn, newUser)
+		err := db.CreateUser(db.DBConn, newUser)
 		if err != nil {
 			http.Error(w, "Erro ao criar usuário", http.StatusInternalServerError)
 			return
@@ -88,13 +93,9 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		userID, _ := strconv.ParseInt(r.FormValue("user_id"), 10, 64) // Exemplo: pegar o ID do usuário logado
 
 		// Cria um post
-		newPost := &models.Post{
-			UserID:  userID,
-			Title:   title,
-			Content: content,
-		}
+		newPost := &models.Post{UserID: userID, Title: title, Content: content}
 
-		err := db.CreatePost(dbConn, newPost)
+		err := db.CreatePost(db.DBConn, newPost)
 		if err != nil {
 			http.Error(w, "Erro ao criar post", http.StatusInternalServerError)
 			return

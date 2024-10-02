@@ -10,8 +10,8 @@ import (
 // GetUserByUsername busca um usuário no banco de dados pelo nome de usuário
 func GetUserByUsername(db *sql.DB, username string) (*models.User, error) {
 	user := &models.User{}
-	query := "SELECT id, username, email, created_at FROM users WHERE username = ?"
-	err := db.QueryRow(query, username).Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt)
+	query := "SELECT id, username, password, email, created_at FROM users WHERE username = ?"
+	err := db.QueryRow(query, username).Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Usuário não encontrado

@@ -16,7 +16,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Obtém a lista de posts
-	posts, err := db.ListPosts(dbConn)
+	posts, err := db.GetAllPosts(db.DBConn)
 	if err != nil {
 		http.Error(w, "Erro ao carregar posts", http.StatusInternalServerError)
 		return

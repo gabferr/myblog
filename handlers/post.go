@@ -19,7 +19,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Busca o post pelo ID no banco de dados
-	post, err := db.GetPostByID(dbConn, postID)
+	post, err := db.GetPostByID(db.DBConn, postID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post não encontrado", http.StatusNotFound)
