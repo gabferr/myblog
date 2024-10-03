@@ -1,26 +1,30 @@
 package handlers
 
 import (
-	"html/template"
-	"log"
-	"net/http"
+    "html/template"
+    "log"
+    "net/http"
+    "path/filepath"
 )
 
-// Cache de templates compilados
-// Compilando o template globalmente para evitar recompilação em cada request
-var templates = template.Must(template.ParseFiles(
-	"templates/layout.html", // O layout deve ser carregado primeiro
-	"templates/home.html",
-	"templates/admin.html",
-	"templates/login.html",
-	"templates/post.html",
-	"templates/register.html",
-))
-
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	err := templates.ExecuteTemplate(w, tmpl, data) // Use o nome do template que você deseja renderizar
-	if err != nil {
-		http.Error(w, "Erro ao renderizar template", http.StatusInternalServerError)
-		log.Println("Erro ao renderizar template:", err)
-	}
+    // Define the layout and content templates
+    layoutPath := filepath.Join("templates", "layout.html")
+    contentPath := filepath.Join("templates", tmpl+".html")
+
+    // Parse both templates
+    t, err := template.ParseFiles(layoutPath, contentPath)
+    if err != nil {
+        log.Printf("Erro ao analisar templates: %v", err)
+        http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
+        return
+    }
+
+    // Execute the template, using the layout as the base
+    err = t.ExecuteTemplate(w, "layout", data)
+    if err != nil {
+        log.Printf("Erro ao executar template: %v", err)
+        http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
+        return
+    }
 }

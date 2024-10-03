@@ -1,12 +1,19 @@
-<!-- templates/home.html -->
-{{ define "title" }}Página Inicial - Meu Blog{{ end }}
 {{ define "content" }}
-    {{range .}}
-        <article>
-            <h2>{{.Title}}</h2>
-            <p>{{.Content}}</p>
-            <a href="/post?id={{.ID}}" class="btn btn-primary">Ler mais</a>
-            <p>Criado em: {{.CreatedAt.Format "02/01/2006 15:04:05"}}</p>
-        </article>
-    {{end}}
+    <div class="container mt-4">
+        <h1 class="mb-4">Posts Recentes</h1>
+        {{ range .Posts }}
+            <article class="mb-4 border p-3 rounded shadow-sm">
+                <h2 class="h4">{{ .Title }}</h2>
+                <p class="text-muted">{{ .Content }}</p>
+                <a href="/post?id={{ .ID }}" class="btn btn-primary">Ler mais</a>
+                <p class="mt-2 text-secondary">
+                    Criado em: {{ .CreatedAt.Format "02/01/2006 15:04:05" }}
+                </p>
+            </article>
+        {{ else }}
+            <div class="alert alert-warning" role="alert">
+                Nenhum post encontrado.
+            </div>
+        {{ end }}
+    </div>
 {{ end }}

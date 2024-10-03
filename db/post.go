@@ -7,6 +7,12 @@ import (
 	"github.com/gabferr/myblog/models"
 )
 
+type Post struct {
+	ID      int
+	Title   string
+	Content string
+}
+
 func CreatePost(db *sql.DB, post *models.Post) error {
 	query := `
         INSERT INTO posts (user_id, title, content, created_at, updated_at)
@@ -70,6 +76,7 @@ func GetPostByID(db *sql.DB, id int64) (*models.Post, error) {
 }
 
 // GetAllPosts busca todos os posts no banco de dados
+/*
 func GetAllPosts(db *sql.DB) ([]models.Post, error) {
 	query := "SELECT id, user_id, title, content, created_at, updated_at, deleted_at FROM posts WHERE deleted_at IS NULL ORDER BY created_at DESC"
 
@@ -83,6 +90,28 @@ func GetAllPosts(db *sql.DB) ([]models.Post, error) {
 	for rows.Next() {
 		var post models.Post
 		err := rows.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.CreatedAt, &post.UpdatedAt, &post.DeletedAt)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}*/
+// Função que retorna todos os posts
+func GetAllPosts(dbConn *sql.DB) ([]Post, error) {
+	// Lógica para buscar posts do banco de dados
+	var posts []Post
+	// Exemplo de consulta
+	rows, err := dbConn.Query("SELECT id, title, content FROM posts")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post Post
+		err = rows.Scan(&post.ID, &post.Title, &post.Content)
 		if err != nil {
 			return nil, err
 		}

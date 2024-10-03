@@ -8,13 +8,18 @@ import (
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	posts, err := db.GetAllPosts()
+	posts, err := db.GetAllPosts(db.DBConn)
 	if err != nil {
-		http.Error(w, "Erro ao obter posts", http.StatusInternalServerError)
-		log.Println("Erro ao obter posts:", err)
+		log.Printf("Erro ao obter posts: %v", err)
+		http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
 		return
 	}
 
-	// Renderiza o template 'home.html' dentro do layout
-	renderTemplate(w, "home.html", posts)
+	data := struct {
+		Posts []db.Post
+	}{
+		Posts: posts,
+	}
+
+	renderTemplate(w, "home", data)
 }

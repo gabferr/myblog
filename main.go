@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/login", middleware.BasicAuth(handlers.LoginHandler, "admin", "senhaSegura"))
 	http.HandleFunc("/register", middleware.BasicAuth(handlers.RegisterHandler, "admin", "senhaSegura"))
 	http.HandleFunc("/create", handlers.CreatePostHandler)
+
 	// Inicializa o servidor
 	fmt.Println("Servidor rodando em http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
