@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gabferr/myblog/db"
+	"github.com/gabferr/myblog/models"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,10 +16,16 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Converte a fatia de ponteiros em uma fatia de valores
+	var postValues []models.Post
+	for _, post := range posts {
+		postValues = append(postValues, *post) // Desreferencia o ponteiro para obter o valor
+	}
+
 	data := struct {
-		Posts []db.Post
+		Posts []models.Post
 	}{
-		Posts: posts,
+		Posts: postValues,
 	}
 
 	renderTemplate(w, "home", data)

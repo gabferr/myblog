@@ -7,12 +7,6 @@ import (
 	"github.com/gabferr/myblog/models"
 )
 
-type Post struct {
-	ID      int
-	Title   string
-	Content string
-}
-
 func CreatePost(db *sql.DB, post *models.Post) error {
 	query := `
         INSERT INTO posts (user_id, title, content, created_at, updated_at)
@@ -23,16 +17,13 @@ func CreatePost(db *sql.DB, post *models.Post) error {
 	if err != nil {
 		return err
 	}
-
 	id, err := result.LastInsertId()
 	if err != nil {
 		return err
 	}
-
 	post.ID = id
 	post.CreatedAt = now
 	post.UpdatedAt = now
-
 	return nil
 }
 
@@ -47,9 +38,7 @@ func UpdatePost(db *sql.DB, post *models.Post) error {
 	if err != nil {
 		return err
 	}
-
 	post.UpdatedAt = now
-
 	return nil
 }
 
@@ -64,7 +53,6 @@ func DeletePost(db *sql.DB, postID int64) error {
 	return err
 }
 
-// Função adicional para obter um post por ID
 func GetPostByID(db *sql.DB, id int64) (*models.Post, error) {
 	query := "SELECT id, user_id, title, content, created_at, updated_at, deleted_at FROM posts WHERE id = ?"
 	post := &models.Post{}
@@ -75,48 +63,22 @@ func GetPostByID(db *sql.DB, id int64) (*models.Post, error) {
 	return post, nil
 }
 
-// GetAllPosts busca todos os posts no banco de dados
-/*
-func GetAllPosts(db *sql.DB) ([]models.Post, error) {
+func GetAllPosts(db *sql.DB) ([]*models.Post, error) {
 	query := "SELECT id, user_id, title, content, created_at, updated_at, deleted_at FROM posts WHERE deleted_at IS NULL ORDER BY created_at DESC"
-
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var posts []models.Post
+	var posts []*models.Post
 	for rows.Next() {
-		var post models.Post
-		err := rows.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.CreatedAt, &post.UpdatedAt, &post.DeletedAt)
+		p := &models.Post{}
+		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.CreatedAt, &p.UpdatedAt, &p.DeletedAt)
 		if err != nil {
 			return nil, err
 		}
-		posts = append(posts, post)
+		posts = append(posts, p)
 	}
-
-	return posts, nil
-}*/
-// Função que retorna todos os posts
-func GetAllPosts(dbConn *sql.DB) ([]Post, error) {
-	// Lógica para buscar posts do banco de dados
-	var posts []Post
-	// Exemplo de consulta
-	rows, err := dbConn.Query("SELECT id, title, content FROM posts")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var post Post
-		err = rows.Scan(&post.ID, &post.Title, &post.Content)
-		if err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
-	}
-
 	return posts, nil
 }
