@@ -1,33 +1,25 @@
-// handlers/admin.go
 package handlers
 
 import (
 	"net/http"
-	"text/template"
 
 	"github.com/gabferr/myblog/db"
 )
 
 // AdminHandler exibe o painel de administração com a lista de posts
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
-    // Busca todos os posts do banco de dados usando a conexão exportada
-    posts, err := db.GetAllPosts(db.DBConn) // Usando a conexão exportada
-    if err != nil {
-        http.Error(w, "Erro ao carregar posts", http.StatusInternalServerError)
-        return
-    }
+	// Busca todos os posts do banco de dados usando a conexão exportada
+	posts, err := db.GetAllPosts(db.DBConn)
+	if err != nil {
+		http.Error(w, "Erro ao carregar posts", http.StatusInternalServerError)
+		return
+	}
 
-    // Carrega o template da página de administração
-    tmpl, err := template.ParseFiles("templates/admin.html")
-    if err != nil {
-        http.Error(w, "Erro ao carregar template", http.StatusInternalServerError)
-        return
-    }
+	// Prepara os dados para passar ao template
+	data := map[string]interface{}{
+		"Posts": posts,
+	}
 
-    // Renderiza o template, passando os posts como dados
-    err = tmpl.Execute(w, posts)
-    if err != nil {
-        http.Error(w, "Erro ao renderizar template", http.StatusInternalServerError)
-        return
-    }
+	// Usa a função renderTemplate para renderizar a página admin
+	renderTemplate(w, "admin", data)
 }

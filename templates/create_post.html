@@ -1,0 +1,23 @@
+{{ define "title" }}Criar Novo Post - Meu Blog{{ end }}
+
+{{ define "content" }}
+<div class="container mt-5">
+    <h2>Criar Novo Post</h2>
+    {{ if .Error }}
+    <div class="alert alert-danger" role="alert">
+        {{ .Error }}
+    </div>
+    {{ end }}
+    <form action="/admin/create-post" method="POST">
+        <div class="mb-3">
+            <label for="title" class="form-label">Título</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Conteúdo</label>
+            <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Publicar Post</button>
+    </form>
+</div>
+{{ end }}

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"net/http"
 	"strconv"
-	"text/template"
 
 	"github.com/gabferr/myblog/db"
 )
@@ -28,12 +27,6 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	renderTemplate(w, "post", post)
 
-	// Renderiza o template da página do post
-	tmpl, err := template.ParseFiles("templates/post.html")
-	if err != nil {
-		http.Error(w, "Erro ao carregar template", http.StatusInternalServerError)
-		return
-	}
-	tmpl.Execute(w, post)
 }

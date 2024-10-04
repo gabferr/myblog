@@ -24,10 +24,10 @@ func main() {
 	// Configuração das rotas
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/post", handlers.PostHandler)
-	http.HandleFunc("/admin", handlers.AdminHandler)
-	http.HandleFunc("/login", middleware.BasicAuth(handlers.LoginHandler, "admin", "senhaSegura"))
-	http.HandleFunc("/register", middleware.BasicAuth(handlers.RegisterHandler, "admin", "senhaSegura"))
-	http.HandleFunc("/create", handlers.CreatePostHandler)
+	http.HandleFunc("/admin", middleware.BasicAuth(handlers.AdminHandler, "admin", "admin"))
+	http.HandleFunc("/login", middleware.BasicAuth(handlers.LoginHandler, "admin", "admin"))
+	http.HandleFunc("/register", middleware.BasicAuth(handlers.RegisterHandler, "admin", "admin"))
+	http.HandleFunc("/admin/create-post", middleware.BasicAuth(handlers.CreatePostHandler, "admin", "admin"))
 
 	// Inicializa o servidor
 	fmt.Println("Servidor rodando em http://localhost:8080")

@@ -2,53 +2,54 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
-	"text/template"
-
-	"fmt"
 
 	"github.com/gabferr/myblog/db"
 	"github.com/gabferr/myblog/models"
 )
 
-// Exibe a página de login e processa o formulário de login
+// LoginHandler exibe a página de login e processa o formulário de login
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("templates/login.html")
-		if err != nil {
-			http.Error(w, "Erro ao carregar template", http.StatusInternalServerError)
-			return
-		}
-		tmpl.Execute(w, nil)
-	} else if r.Method == http.MethodPost {
-		username := r.FormValue("username")
-		password := r.FormValue("password")
-
-		// Imprime o username e password recebidos (para debug)
-		fmt.Println("Username:", username)
-		fmt.Println("Password:", password)
-
-		// Validação e autenticação do usuário
-		user, err := db.GetUserByUsername(db.DBConn, username)
-		if err != nil || user == nil || user.Password != password {
-			http.Error(w, "Usuário ou senha incorretos", http.StatusUnauthorized)
-			return
-		}
-
-		// Definir sessão ou cookies para autenticar o usuário
-		http.Redirect(w, r, "/admin", http.StatusSeeOther)
+	switch r.Method {
+	case http.MethodGet:
+		renderTemplate(w, "login", nil)
+	case http.MethodPost:
+		handleLoginPost(w, r)
+	default:
+		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
 	}
+}
+
+func handleLoginPost(w http.ResponseWriter, r *http.Request) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	// Validação e autenticação do usuário
+	user, err := db.GetUserByUsername(db.DBConn, username)
+	if err != nil {
+		http.Error(w, "Erro ao processar login", http.StatusInternalServerError)
+		return
+	}
+
+	if user == nil || user.Password != password {
+		// Renderiza a página de login novamente com uma mensagem de erro
+		data := map[string]interface{}{
+			"Error": "Usuário ou senha incorretos",
+		}
+		renderTemplate(w, "login", data)
+		return
+	}
+
+	// TODO: Implementar uma forma segura de gerenciar sessões
+	// Por exemplo, usando github.com/gorilla/sessions
+
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }
 
 // Exibe a página de registro e processa o formulário de registro
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("templates/register.html")
-		if err != nil {
-			http.Error(w, "Erro ao carregar template", http.StatusInternalServerError)
-			return
-		}
-		tmpl.Execute(w, nil)
+		renderTemplate(w, "register", nil)
+
 	} else if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
@@ -81,27 +82,21 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 // Cria um novo post
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("templates/create_post.html")
-		if err != nil {
-			http.Error(w, "Erro ao carregar template", http.StatusInternalServerError)
-			return
-		}
-		tmpl.Execute(w, nil)
+		renderTemplate(w, "create_post", nil)
 	} else if r.Method == http.MethodPost {
 		title := r.FormValue("title")
 		content := r.FormValue("content")
-		userID, _ := strconv.ParseInt(r.FormValue("user_id"), 10, 64) // Exemplo: pegar o ID do usuário logado
 
-		// Cria um post
-		newPost := &models.Post{UserID: userID, Title: title, Content: content}
+		// TODO: Validar os dados do formulário
 
-		err := db.CreatePost(db.DBConn, newPost)
+		err := db.CreatePost(db.DBConn, &models.Post{Title: title, Content: content})
 		if err != nil {
-			http.Error(w, "Erro ao criar post", http.StatusInternalServerError)
+			renderTemplate(w, "create-post", map[string]interface{}{
+				"Error": "Erro ao criar o post. Por favor, tente novamente.",
+			})
 			return
 		}
 
-		// Redireciona para a página inicial ou de administração
 		http.Redirect(w, r, "/admin", http.StatusSeeOther)
 	}
 }
